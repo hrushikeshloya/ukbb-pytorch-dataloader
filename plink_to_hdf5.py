@@ -40,5 +40,6 @@ if __name__ == '__main__':
     parser.add_argument('--phenotype_path', help= 'Covariate Adjusted Phenotype file in csv format')
     parser.add_argument('--phen_col', help='Column name corresponding to the phenotype in the phenotype file')
     parser.add_argument('--out', help='Output destination')
+    parser.add_argument('--chunk_size', help='Chunk size of the HDF5 file', type = int, default = 500)
     args = parser.parse_args()
     main(args)
