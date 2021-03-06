@@ -20,15 +20,15 @@ def main(args):
     x = snp_on_disk[snp_on_disk.iid_to_index(iid_merged[['FID','IID']].values),:].read( dtype='int8' ,  _require_float32_64=False ).val
     mean_genotype = np.mean(x, axis=0)
     std_genotype = np.zeros(x.shape[1])  ## Low memory exact std dev    
-    for i in tqdm(range(0, x.shape[1], 500)):
-        std_genotype[i:min(i+500, x.shape[1])] = np.std(x[:,i:min(i+500, x.shape[1])], axis=0)
+    for i in tqdm(range(0, x.shape[1], args.chunk_size)):
+        std_genotype[i:min(i+args.chunk_size, x.shape[1])] = np.std(x[:,i:min(i+args.chunk_size, x.shape[1])], axis=0)
     y = iid_merged[args.phen_col].values
     mean_phenotype = y.mean()
     std_phenotype = y.std()
     h = h5py.File(args.out + '.hdf5', 'w')
-    dset1 = h.create_dataset('data', (x.shape[0], x.shape[1]), chunks=(500, x.shape[1]), dtype= 'int8')
-    for i in tqdm(range(0, x.shape[0], 500)):
-        dset1[i:min(i+500, x.shape[0]),:] = x[i:min(i+500, x.shape[0])]
+    dset1 = h.create_dataset('data', (x.shape[0], x.shape[1]), chunks=(args.chunk_size, x.shape[1]), dtype= 'int8')
+    for i in tqdm(range(0, x.shape[0], args.chunk_size)):
+        dset1[i:min(i+args.chunk_size, x.shape[0]),:] = x[i:min(i+args.chunk_size, x.shape[0])]
     dset2 = h.create_dataset('label', data=(y - mean_phenotype)/std_phenotype)
     dset3 = h.create_dataset('mean_genotype', data=mean_genotype)
     dset4 = h.create_dataset('std_genotype', data=std_genotype)
