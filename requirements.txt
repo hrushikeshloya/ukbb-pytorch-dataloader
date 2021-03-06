@@ -1,0 +1,5 @@
+h5py==3.1.0
+tqdm==4.56.0
+pandas==1.2.1
+pysnptools==0.4.26
+numpy==1.19.5
